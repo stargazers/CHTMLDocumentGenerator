@@ -1,0 +1,117 @@
+body
+{
+	background-color: #acacac;
+	font-family: Helvetica;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 2em;
+	width: 80%;
+	border-left: 1em solid black;
+	padding-left: 0.5em;
+}
+
+a:link, a:visited
+{
+	color: blue;
+	text-decoration: none;
+}
+
+a:hover
+{
+	color: red;
+	text-decoration: underline;
+}
+
+li
+{
+	font-style: italic;
+}
+
+.class_information, .contents_list
+{
+	background-color: white;
+	width: 80%;
+	padding: 1em;
+	margin-bottom: 2em;
+}
+
+.titlebar, .titlebar_public, .titlebar_private
+{
+	font-weight: bold;
+	background-color: #00aacc;
+	display: block;
+	padding: 0.3em;
+	padding-left: 1em;
+	padding-right: 1em;
+	width: 80%;
+}
+
+.titlebar_private
+{
+	background-color: #aa50cc;
+}
+
+.titlebar_public
+{
+	background-color: #78AB46;
+}
+
+.tag_name
+{
+	display: block;
+	font-weight: bold;
+	margin-top: 0.8em;
+}
+
+.tag_value
+{
+	display: block;
+	font-style: italic;
+	margin-left: 2em;
+	margin-right: 4em;
+	margin-bottom: 0.4em;
+}
+
+.param_name
+{
+	font-weight: bold;
+	margin-right: 2em;
+}
+
+table
+{
+	margin-left: 2em;
+}
+
+tr
+{
+	vertical-align: top;
+}
+
+.method
+{
+	background-color: white;
+	width: 80%;
+	padding: 1em;
+	margin-bottom: 2em;
+}
+
+.method_type_public
+{
+	color: #aa0;
+}
+
+.method_type_private
+{
+	color: #0aa;
+}
+
+#footer
+{
+	margin-top: -1em;
+	font-size: 0.8em;
+	width: 80%;
+	text-align: center;
+	margin-bottom: 2em;
+	padding-bottom: 1em;
+}
