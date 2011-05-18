@@ -1,0 +1,14 @@
+CHTMLDocumentation
+==================
+
+	Description:
+		PHP Class what will generate HTML document from PHP source classes
+		when class have documentation style similar to Doxygen style.
+		This class requires CDocumentation class to work.
+
+	License:
+		GNU AGPL
+
+	Author:
+		Aleksi Räsänen, 2011
+		aleksi.rasanen@runosydan.net
