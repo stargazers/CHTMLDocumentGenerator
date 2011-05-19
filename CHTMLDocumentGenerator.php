@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				'@copyright' => 'Copyright',
 				'@email' => 'E-Mail',
 				'@license' => 'License' );
-
+		private $CSS_file = 'document_generator.css';
 
 		// ***********************************************
 		//	getClassName
@@ -74,7 +74,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		private function getCSS()
 		{
 			$return_string = '<style>';
-			$return_string .= file_get_contents( 'document_generator.css' );
+			$return_string .= file_get_contents( $this->CSS_file );
 			$return_string .= '</style>';
 
 			return $return_string;
@@ -309,6 +309,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		// ***********************************************
 		public function createHTMLDocument()
 		{
+			$this->checkCSSFile();
 			$html = $this->generateHTMLHeader();
 			$html .= $this->generateHTMLForClassInfo();
 			$html .= $this->generateHTMLContentsList();
@@ -381,6 +382,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			sort( $return_array );
 			return $return_array;
+		}
+
+		// ***********************************************
+		//	checkCSSFile
+		/*!
+			@brief Check if given CSS file exists. If not,
+			  throws and Exception
+		*/
+		// ***********************************************
+		private function checkCSSFile()
+		{
+			if(! file_exists( $this->CSS_file ) )
+			{
+				throw new Exception( 'CSS File ' . $this->CSS_file 
+				  . ' was not found!' );
+			}
+		}
+
+		// ***********************************************
+		//	setCSSFile
+		/*!
+			@brief Set CSS file to use if we do not want
+			  to use document_generator.css file
+
+			@param $filename CSS Filename
+		*/
+		// ***********************************************
+		public function setCSSFile( $filename )
+		{
+			$this->CSS_file = $filename;
+			$this->checkCSSFile();
 		}
 
 		// ***********************************************
