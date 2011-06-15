@@ -24,8 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	//	CHTMLDocumentGenerator
 	/*!
 		@brief Generate HTML documents from PHP 
-		  source files
-
+		  source files.
 		@author Aleksi Räsänen
 		@email aleksi.rasanen@runosydan.net
 		@license GNU AGPL
@@ -40,13 +39,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				'@copyright' => 'Copyright',
 				'@email' => 'E-Mail',
 				'@license' => 'License' );
-		private $CSS_file = 'document_generator.css';
+		private $CSS_file = 'CHTMLDocumentGenerator/document_generator.css';
 
 		// ***********************************************
 		//	getClassName
 		/*!
-			@brief Get name of a class from class variable $data.
-
+			@brief Get name of a class from class variable $data
 			@return String.
 		*/
 		// ***********************************************
@@ -67,7 +65,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		//	getCSS
 		/*!
 			@brief Get CSS definitions for <style> block
-
 			@return String
 		*/
 		// ***********************************************
@@ -84,13 +81,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		//	generateHTMLHeader
 		/*!
 			@brief Create standard HTML header
-
-			@return String.
+			@return String
 		*/
 		// ***********************************************
 		private function generateHTMLHeader()
 		{
 			$class_name = $this->getClassName();
+			if( empty( $class_name ) )
+				$class_name = 'Documentation for a non-class file';
 
 			$str = '<!DOCTYPE html>'
 				. '<head>';
@@ -110,8 +108,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		//	generateHTMLFooter
 		/*!
 			@brief Create standard HTML footer
-
-			@return String.
+			@return String
 		*/
 		// ***********************************************
 		private function generateHTMLFooter()
@@ -133,7 +130,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		//	getClassCommentBlock
 		/*!
 			@brief Search a comment block for a class
-
 			@return Array
 		*/
 		// ***********************************************
@@ -155,22 +151,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		//	generateHTMLForClassInfo
 		/*!
 			@brief Creates class information HTML block
-
 			@return String
 		*/
 		// ***********************************************
 		private function generateHTMLForClassInfo()
 		{
+			$data = $this->getClassCommentBlock();
+			
+			if(! isset( $data['name'] ) )
+				return '';
+
 			$tags_to_show = array( 
 				'author' => 'Author', 'email' => 'Email', 
 				'copyright' => 'Copyright', 'license' => 'License',
 				'brief' => 'Brief description' );
 
 			$class_name = '';
-			$data = $this->getClassCommentBlock();
-
-			if( isset( $data['name'] ) )
-				$class_name = $data['name'];
+			$class_name = $data['name'];
 
 			$html = '<span class="titlebar">' . $class_name . '</span>'
 				. '<div class="class_information">';
@@ -204,9 +201,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		/*!
 			@brief Search all methods and create
 			  div "method" where we put method informations
-
 			@param $data Array where is correct method data
-
 			@return String
 		*/
 		// ***********************************************
@@ -218,11 +213,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				'return' => 'Return value' );
 
 			$class = 'method_type_' . $data['type'];
-
 			$html = '<a id="' . $data['name'] . '"></a>';
-			$html .= '<span class="titlebar_'
-				. $data['type'] . '">' . $data['type'] 
-				. ' function ' . $data['name'] . '</span>';
+
+			if( $data['type'] == 'function' )
+			{
+				$html .= '<span class="titlebar_function">function '
+					. $data['name'] . '</span>';
+			}
+			else
+			{
+				$html .= '<span class="titlebar_'
+					. $data['type'] . '">' . $data['type'] 
+					. ' function ' . $data['name'] . '</span>';
+			}
 
 			$html .= '<div class="method">';
 
@@ -253,10 +256,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			@brief Generate HTML for @params array. This is
 			  used when we want to create table element what
 			  is shown on method commentboxes.
-
 			@param $data Array of method parameters and
 			  their comments
-
 			@return HTML String
 		*/
 		// ***********************************************
@@ -303,7 +304,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		//	createHTMLDocument
 		/*!
 			@brief Create a documentation from source file
-
 			@return String.
 		*/
 		// ***********************************************
@@ -315,6 +315,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$html .= $this->generateHTMLContentsList();
 			$html .= $this->getFunctionsInformation( 'public' );
 			$html .= $this->getFunctionsInformation( 'private' );
+			$html .= $this->getFunctionsInformation( 'function' );
 			$html .= $this->generateHTMLFooter();
 			return $html;
 		}
@@ -324,7 +325,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		/*!
 			@brief Generates short contents list of all 
 			  methods used in this class
-
 			@return HTML String
 		*/
 		// ***********************************************
@@ -332,39 +332,60 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		{
 			$privates = $this->getFunctionNames( 'private' );
 			$publics = $this->getFunctionNames( 'public' );
+			$functions = $this->getFunctionNames( 'function' );
 
 			$html = '<span class="titlebar">Contents</span>'
-				. '<div class="contents_list">'
-				. '<span class="tag_name">Public methods</span>'
-				. '<ul>';
+				. '<div class="contents_list">';
 
-			foreach( $publics as $method_name )
-			{
-				$html .= '<li><a href="#' . $method_name . '">'
-					. $method_name . '</a></li>';
-			}
+			$html .= $this->createMethodsList( 'Public methods', 
+				$publics );
+			$html .= $this->createMethodsList( 'Private methods', 
+				$privates );
+			$html .= $this->createMethodsList( 'Functions', 
+				$functions );
 
-			$html .= '</ul><span class="tag_name">Private methods</span>'
-				. '<ul>';
-
-			foreach( $privates as $method_name )
-			{
-				$html .= '<li><a href="#' . $method_name . '">'
-					. $method_name . '</a></li>';
-			}
-
-			$html .= '</ul></div>';
+			$html .= '</div>';
 
 			return $html;
 		}
+
+		// ************************************************** 
+		//  createMethodsList
+		/*!
+			@brief Creates a list of found methods and functions
+			@param $title Title to show
+			@param $items Array of items
+			@return HTML String
+		*/
+		// ************************************************** 
+		private function createMethodsList( $title, $items )
+		{
+			$html = '<span class="tag_name">' . $title 
+				. '</span>' . '<ul>';
+
+			if(! count( $items ) > 0 )
+			{
+				$html .= '<i>No ' . strtolower( $title ) . ' found.</i>';
+				$html .= '</ul>';
+				return $html;
+			}
+
+			foreach( $items as $method_name )
+			{
+				$html .= '<li><a href="#' . $method_name . '">'
+					. $method_name . '</a></li>';
+			}
+
+			$html .= '</ul>';
+			return $html;
+		}
+
 
 		// ***********************************************
 		//	getFunctionNames
 		/*!
 			@brief Get function names which are type $type
-
 			@param $type Type what must be private or public
-
 			@return Array of function names
 		*/
 		// ***********************************************
@@ -405,7 +426,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		/*!
 			@brief Set CSS file to use if we do not want
 			  to use document_generator.css file
-
 			@param $filename CSS Filename
 		*/
 		// ***********************************************
@@ -419,7 +439,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		//	__construct
 		/*!
 			@brief Initializes variables
-
 			@param $filename File to parse
 		*/
 		// ***********************************************

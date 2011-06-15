@@ -35,7 +35,8 @@ li
 	margin-bottom: 2em;
 }
 
-.titlebar, .titlebar_public, .titlebar_private
+.titlebar, .titlebar_public, .titlebar_private,
+.titlebar_function
 {
 	font-weight: bold;
 	background-color: #00aacc;
@@ -54,6 +55,11 @@ li
 .titlebar_public
 {
 	background-color: #78AB46;
+}
+
+.titlebar_function
+{
+	background-color: #affa00;
 }
 
 .tag_name
@@ -104,6 +110,11 @@ tr
 .method_type_private
 {
 	color: #0aa;
+}
+
+.method_type_function
+{
+	color: #a0a;
 }
 
 #footer
